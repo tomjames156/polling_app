@@ -21,12 +21,21 @@ def detail(request, question_id):
     return render(request, 'polls/detail.html', context)
 
 def results(request, question_id):
-    return HttpResponse(f"You are looking at the results of Question {question_id}")
+    question = get_object_or_404(Question, pk=question_id)
+    choices = question.choice_set.all()
+    total = sum([choice.votes for choice in choices])
+    context = {
+        'question': question, 
+        'choices': choices,
+        'total': total,
+        }
+    
+    return render(request, 'polls/results.html', context)
 
 def vote(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
     try:
-        selected_choice = question.choice_set.get(pk=request.POST['CHOICE'])
+        selected_choice = question.choice_set.get(pk=request.POST['choice'])
     except (KeyError, Choice.DoesNotExist):
         return render(request, 'polls/detail.html', {
             'question': question,
@@ -36,4 +45,4 @@ def vote(request, question_id):
         selected_choice.votes += 1
         selected_choice.save()
 
-        return HttpResponseRedirect( reverse('polls:result', args=(question_id,)))
+        return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))

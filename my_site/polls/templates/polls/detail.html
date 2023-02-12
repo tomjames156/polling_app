@@ -4,17 +4,17 @@
 <div class="w-full p-6">
     {% if choices %}
 
-    <form action={% url 'polls:vote' question.id %}>
-        {% csrf_token %}
-        <fieldset>
-            <legend class="text-xl font-bold mb-2">{{ question.question_text }}</legend>
-            {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-            {% for choice in choices %}
-            <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}"/>
-            <label for="choice{{ forloop.counter}} ">{{ choice.choice_text }}</label><br>
-            {% endfor %}
-        </fieldset>
-        <input class="btn btn-secondary mt-4" type="submit" value="Vote">
+    <form action="{% url 'polls:vote' question.id %}" method="post">
+    {% csrf_token %}
+    <fieldset>
+        <legend class="text-xl font-bold mb-2">{{ question.question_text }}</legend>
+        {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+        {% for choice in choices %}
+        <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}"/>
+        <label for="choice{{ forloop.counter}} ">{{ choice.choice_text }}</label><br>
+        {% endfor %}
+    </fieldset>
+    <input class="btn btn-secondary mt-4" type="submit" value="Vote">
     </form>
     {% else %}
         <p>No options are available. The admin is still setting up the poll.</p>

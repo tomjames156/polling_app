@@ -1,0 +1,14 @@
+{% extends 'polls/base.html' %}
+
+{% block content %}
+    <div class="w-full p-6">
+        <ul class="flex flex-col gap-y-1 mb-4">
+            {% for choice in choices %}
+                <li>{{ choice.choice_text }} -- <span class='font-semibold'>{{ choice.votes }} vote{{ choice.votes|pluralize }}</span></li>
+                <progress class="progress progress-info w-56" value="{{ choice.votes }}" max={{ total }}></progress>
+            {% endfor %}
+        </ul>
+
+        <a class="btn btn-secondary" href={% url 'polls:detail' question.id %}>Vote again</a>
+    <div>
+{% endblock %}
