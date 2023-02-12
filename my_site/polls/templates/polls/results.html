@@ -2,13 +2,14 @@
 
 {% block content %}
     <div class="w-full p-6">
-        <ul class="flex flex-col gap-y-1 mb-4">
+        <p class="text-xl font-semibold mb-2">{{question}}</p>
+        <ul class="flex flex-col gap-y-1 mb-4 ml-2">
             {% for choice in question.choice_set.all %}
                 <li>{{ choice.choice_text }} -- <span class='font-semibold'>{{ choice.votes }} vote{{ choice.votes|pluralize }}</span></li>
                 <progress class="progress progress-accent w-56" value="{{ choice.votes }}" max={{ total }}></progress>
             {% endfor %}
         </ul>
 
-        <a class="btn btn-secondary" href={% url 'polls:detail' question.id %}>Vote again</a>
+        <a class="btn btn-secondary ml-2" href={% url 'polls:detail' question.id %}>Vote again</a>
     <div>
 {% endblock %}
