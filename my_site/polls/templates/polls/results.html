@@ -3,7 +3,7 @@
 {% block content %}
     <div class="w-full p-6">
         <ul class="flex flex-col gap-y-1 mb-4">
-            {% for choice in choices %}
+            {% for choice in question.choice_set.all %}
                 <li>{{ choice.choice_text }} -- <span class='font-semibold'>{{ choice.votes }} vote{{ choice.votes|pluralize }}</span></li>
                 <progress class="progress progress-accent w-56" value="{{ choice.votes }}" max={{ total }}></progress>
             {% endfor %}
