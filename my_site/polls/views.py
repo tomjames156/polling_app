@@ -1,7 +1,8 @@
-from django.shortcuts import HttpResponse, render, get_object_or_404, HttpResponseRedirect
+from django.shortcuts import render, get_object_or_404, HttpResponseRedirect
 from django.urls import reverse
 from django.db.models import F
 from django.views import generic
+from django.utils import timezone
 from .models import Question, Choice
 
 # Create your views here.
@@ -12,7 +13,7 @@ class IndexView(generic.ListView):
 
     def get_queryset(self):
         # Returns the last 5 posted polls
-        return Question.objects.order_by('pub_date')[:4]
+        return Question.objects.filter(pub_date__lte=timezone.now()).order_by('-pub_date')[:4]
     
 class DetailView(generic.DetailView):
     model = Question
