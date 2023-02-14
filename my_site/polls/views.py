@@ -14,10 +14,30 @@ class IndexView(generic.ListView):
     def get_queryset(self):
         # Returns the last 5 posted polls
         return Question.objects.filter(pub_date__lte=timezone.now()).order_by('-pub_date')[:4]
+
     
 class DetailView(generic.DetailView):
     model = Question
     template_name = 'polls/detail.html'
+
+    def get_queryset(self):
+        return Question.objects.filter(pub_date__lte=timezone.now())
+
+
+class ResultsView(generic.DetailView):
+    template_name = 'polls/results.html'
+    model = Question
+
+    def get_queryset(self):
+        return Question.objects.filter(pub_date__lte=timezone.now())
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        choices = context['question'].choice_set.all()
+        context['total'] = sum(choice.votes for choice in choices)
+        context['choices'] = choices
+        return context
+
 
 def vote(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
@@ -33,14 +53,3 @@ def vote(request, question_id):
         selected_choice.save()
 
         return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
-
-def results(request, pk):
-    question = Question.objects.get(pk=pk)
-    choices = question.choice_set.all()
-    total = sum(choice.votes for choice in choices)
-    context = {
-        'question': question,
-        'choices': choices, 
-        'total': total
-    }
-    return render(request, 'polls/results.html', context)
