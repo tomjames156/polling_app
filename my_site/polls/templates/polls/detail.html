@@ -17,7 +17,8 @@
     <input class="btn btn-secondary mt-4" type="submit" value="Vote">
     </form>
     {%else %}
-        <p>No options are available. The admin is still setting up the poll.</p>
+        <p class="font-semibold">Question Does Not Exist</p>
+        <a class='btn btn-secondary mt-4' href="{% url 'polls:index' %}">Back to Home</a>
     {% endif %}
 </div> 
 {% endblock %}

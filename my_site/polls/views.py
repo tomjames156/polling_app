@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, HttpResponseRedirect
 from django.urls import reverse
-from django.db.models import F
+from django.db.models import F, FilteredRelation, Q
 from django.views import generic
 from django.utils import timezone
 from .models import Question, Choice
@@ -13,16 +13,23 @@ class IndexView(generic.ListView):
 
     def get_queryset(self):
         # Returns the last 5 posted polls
-        return Question.objects.filter(pub_date__lte=timezone.now()).order_by('-pub_date')[:4]
+        questions = Question.objects.filter(pub_date__lte=timezone.now()).order_by('-pub_date')
+        questions = [question for question in questions if question.choice_set.count() > 1][:5]
+        return questions
 
-    
+
 class DetailView(generic.DetailView):
     model = Question
     template_name = 'polls/detail.html'
 
     def get_queryset(self):
-        return Question.objects.filter(pub_date__lte=timezone.now())
+        questions = Question.objects.filter(pub_date__lte=timezone.now())
+        return questions
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if context['question'].choice_set.count() >= 2:
+            return context
 
 class ResultsView(generic.DetailView):
     template_name = 'polls/results.html'
@@ -31,12 +38,13 @@ class ResultsView(generic.DetailView):
     def get_queryset(self):
         return Question.objects.filter(pub_date__lte=timezone.now())
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        choices = context['question'].choice_set.all()
-        context['total'] = sum(choice.votes for choice in choices)
-        context['choices'] = choices
-        return context
+    def get_context_data(self, **args):
+        context = super().get_context_data(**args)
+        if context['question'].choice_set.count() >= 2:
+            choices = context['question'].choice_set.all()
+            context['total'] = sum(choice.votes for choice in choices)
+            context['choices'] = choices
+            return context
 
 
 def vote(request, question_id):
