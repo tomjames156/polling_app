@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404, HttpResponseRedirect
+from django.shortcuts import render, get_object_or_404, redirect, HttpResponseRedirect
 from django.urls import reverse
 from django.db.models import F, FilteredRelation, Q
 from django.views import generic
@@ -45,6 +45,9 @@ class ResultsView(generic.DetailView):
             context['total'] = sum(choice.votes for choice in choices)
             context['choices'] = choices
             return context
+        else:
+            return []
+
 
 
 def vote(request, question_id):
