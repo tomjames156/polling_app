@@ -1,4 +1,5 @@
 # polling_app
 This is Django application that allows users to vote in polls
 
-The static files will only load when DEBUG is set to True
+To access the website go to /polls
+The static files will only load when DEBUG is set to False. The admin file page also looks different when DEBUG is set to False in settings.py
